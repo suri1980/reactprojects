@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
 import './index.css';
+import { pathOr, propOr, head } from 'ramda'; // importing ramda for safechecks
+
+// API config to connect openweahtermap.org
 
 const api = {
   key: "97ef8ae65f9917e0b9377c89b4d83a6a",
@@ -9,8 +12,12 @@ const api = {
 
 function App() {
 
+  // Default state
+
   const [query, setQuery] = useState('');
   const [weather, setWeather] = useState('');
+
+  // API call to openweather
 
   const search = evt => {
     if (evt.key == "Enter") {
@@ -19,11 +26,15 @@ function App() {
         .then(result => {
           setQuery('');
           setWeather(result);
-          console.log(result);
         });
     }
   }
 
+  /**
+   * date Builder to display on the page
+   * @param {date} d // takes current date in Date format
+   * @returns date in format Tuesday 20 April 2021
+   */
 
   const dateBuilder = (d) => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -38,10 +49,13 @@ function App() {
 
   }
 
-  const location = weather.name && weather.sys.country ? `${weather.name}, ${weather.sys.country}` : 'Singapore'
-  const temperature = weather.main && weather.main.temp ? `${Math.round(weather.main.temp)}` : '00';
-  const status = weather.weather[0].main ? weather.weather[0].main : 'Warm';
+  // propOr, pathOr, head are utilities from ramda
 
+  const city = propOr('Singapore', 'name')(weather);
+  const country = pathOr('SG', ['sys', 'country'])(weather);
+  const temperature = pathOr(0, ['main', 'temp'])(weather);
+  const weatherArray = head(pathOr([], ['weather'])(weather));
+  const status = pathOr('Sunny', ['main'])(weatherArray);
 
   return (
     <div className={`app ${status}`}>
@@ -49,19 +63,19 @@ function App() {
         <div className="search-box">
           <input 
             type="text"
-            classsName="search-bar"
+            className="search-bar"
             onChange={e => setQuery(e.target.value)}
             value={query}
             onKeyPress={search}
             placeholder="Search..." />
         </div>
         <div className="location-box">
-          <div className="location">{location}</div>
+          <div className="location">{city}, {country}</div>
           <div className="date">{dateBuilder(new Date())}</div>
         </div>
         <div className="weather-box">
           <div className="temp">
-            {temperature}&deg;c
+            {Math.round(temperature)}&deg;c
           </div>
           <div className="weather">{status}</div>
         </div>
