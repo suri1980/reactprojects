@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography, IconButton, Stack, Container } from '@mui/
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
 const Navbar = () => {
+
   return (
     <AppBar position="static" color='inherit'>
         <Container>
@@ -16,6 +17,9 @@ const Navbar = () => {
                 <Stack direction='row' spacing={2}>
                     {/* <Button color='inherit' size='large' edge='start' aria-label='Home' href='/'>Home</Button>
                     <Button color='inherit' size='large' edge='start' aria-label='Home' href='/completed'>Completed Todos</Button> */}
+                    <Typography>
+                        {Date()}
+                    </Typography>
                 </Stack>
             </Toolbar>
         </Container>
